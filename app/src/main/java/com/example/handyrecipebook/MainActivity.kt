@@ -6,55 +6,64 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.handyrecipebook.ui.theme.HandyRecipebookTheme
 
 class MainActivity : ComponentActivity() {
+
+    var listOfRecipes = listOf("Chicken Shawarma", "Maqluba", "Lasagna", "Brownies", "Cupcakes", "Chicken Stock", "Lentil Soup", "Fajita", "Honey Mustard Chicken Wrap")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             HandyRecipebookTheme {
+                var selectedRecipe by remember { mutableStateOf("") }
                 Scaffold(modifier = Modifier.fillMaxSize())
                 { innerPadding ->
                     Column(Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .padding(top = 16.dp)
-                        .padding(start = 10.dp)
-                    )
-                    {
-                        Greeting(
-                            "My Handy Recipebook"
-                        )
-                        Greeting(
-                            "What are we cooking today?"
-                        )
+                        .verticalScroll(state = rememberScrollState())
+                    ){
+                        Text("My Handy Recipebook", modifier = Modifier.padding(start = 16.dp))
+                        Text("What are we cooking today?", modifier = Modifier.padding(start = 16.dp))
+
+                        Column {
+                            for (recipe in listOfRecipes){
+                                Card(
+                                    onClick = { selectedRecipe = recipe },
+                                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                                ){
+                                    Text(
+                                        recipe,
+                                        modifier = Modifier.fillMaxWidth().padding(24.dp)
+                                    )
+                                }
+                                if (recipe == selectedRecipe){
+                                    Text(
+                                        "This is the $recipe recipe!",
+                                        modifier = Modifier.padding(start = 16.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HandyRecipebookTheme {
-        Greeting("Android")
     }
 }
